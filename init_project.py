@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import sys
+from datetime import datetime
 
 
 def main():
@@ -11,6 +12,7 @@ def main():
     parser.add_argument("project_dir", help="项目目录路径")
     parser.add_argument("--title", required=True, help="小说标题")
     parser.add_argument("--genre", default="玄幻", help="小说类型")
+    parser.add_argument("--word-count", type=int, default=2500, help="每章目标字数（默认2500）")
     args = parser.parse_args()
 
     project_dir = os.path.abspath(args.project_dir)
@@ -24,7 +26,8 @@ def main():
         "title": args.title,
         "genre": args.genre,
         "default_scene": "general",
-        "created_at": __import__("datetime").datetime.now().isoformat()
+        "word_count_target": args.word_count,
+        "created_at": datetime.now().isoformat()
     }
     _write_json(os.path.join(project_dir, "config.json"), config)
 
@@ -49,7 +52,11 @@ def main():
             "banned_phrases": [
                 "不仅如此", "总之", "仿佛在说", "显然", "毫无疑问",
                 "值得一提的是", "不言而喻", "众所周知", "事实上",
-                "与此同时", "换言之", "可以说", "某种程度上"
+                "与此同时", "换言之", "可以说", "某种程度上",
+                "综上所述", "简而言之", "从某种意义上来说",
+                "令人印象深刻", "令人叹为观止",
+                "在这个充满挑战的时代", "面对如此严峻的形势",
+                "这无疑是一个", "他的实力不容小觑"
             ],
             "preferred_style": {
                 "sentence_length": "短句为主，长短交替",
@@ -75,11 +82,12 @@ def main():
     print(f"✅ 项目 [{args.title}] 初始化完成")
     print(f"   目录: {project_dir}")
     print(f"   类型: {args.genre}")
+    print(f"   每章字数目标: {args.word_count}")
     print(f"\n下一步:")
     print(f"  1. 编辑 {project_dir}/world.json 补充世界观")
     print(f"  2. 编辑 {project_dir}/characters.json 添加核心人物")
-    print(f"  3. 编辑 {project_dir}/outlines/outline.md 写大纲")
-    print(f"  4. 然后就可以开始写第一章了")
+    print(f"  3. 编辑 {project_dir}/outlines/outline.md 写大纲（5-10章）")
+    print(f"  4. 确认后开始写第一章")
 
 
 def _write_json(path, data):
